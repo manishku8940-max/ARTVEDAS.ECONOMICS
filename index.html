@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AarthVedas — The Society of Economics</title>
+  <meta name="description" content="AarthVedas — The Society of Economics. Where classical wisdom meets modern inquiry." />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Inline Adam Smith SVG silhouette as background art -->
+  <style>
+    /* Adam Smith profile silhouette drawn in CSS/SVG */
+    .adam-bg {
+      position: absolute;
+      right: 3%;
+      bottom: 0;
+      width: 38vw;
+      max-width: 520px;
+      height: 90vh;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .adam-bg svg {
+      height: 100%;
+      width: auto;
+      opacity: 0.055;
+      filter: sepia(100%) brightness(4);
+      animation: floatSilhouette 9s ease-in-out infinite;
+    }
+    @keyframes floatSilhouette {
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-14px)}
+    }
+    /* Radial glow behind silhouette */
+    .adam-glow {
+      position: absolute;
+      right: 0;
+      top: 10%;
+      width: 45vw;
+      height: 80vh;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    /* Chalk equation floaters */
+    .eq {
+      position: absolute;
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      color: rgba(201,168,76,0.12);
+      pointer-events: none;
+      z-index: 1;
+      animation: driftEq linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes driftEq {
+      0%{transform:translateY(0) rotate(var(--r,0deg));opacity:0}
+      10%{opacity:1}
+      90%{opacity:0.6}
+      100%{transform:translateY(-80vh) rotate(var(--r,0deg));opacity:0}
+    }
+    /* Mobile hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 1.5px;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+    @media(max-width:768px){
+      .hamburger{display:flex}
+      .mobile-nav{
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(13,10,4,0.98);
+        z-index:1000;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:2.5rem;
+      }
+      .mobile-nav.open{display:flex}
+      .mobile-nav a{
+        font-family:'Playfair Display',serif;
+        font-size:2rem;
+        color:var(--cream);
+        text-decoration:none;
+        letter-spacing:0.08em;
+      }
+      .mobile-nav a:hover{color:var(--gold)}
+    }
+    /* Join applicant live banner */
+    .live-banner {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 0;
+      padding: 1rem 2rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 2rem auto 0;
+    }
+    .live-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: livePulse 1.5s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100%{opacity:1;transform:scale(1)}
+      50%{opacity:0.4;transform:scale(1.4)}
+    }
+    .live-text {
+      font-family:'Cormorant Garamond',serif;
+      font-size:0.85rem;
+      letter-spacing:0.15em;
+      color:rgba(245,234,214,0.7);
+    }
+    #joinMsg {
+      font-family:'Cormorant Garamond',serif;
+      font-size:0.9rem;
+      color:var(--gold);
+      margin-top:0.5rem;
+      min-height:1.2em;
+      font-style:italic;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor"></div>
+<div class="cursor-ring"></div>
+
+<!-- Particle Canvas -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- Mobile Nav Overlay -->
+<nav class="mobile-nav" id="mobileNav">
+  <a href="#home" onclick="closeMobileNav()">Home</a>
+  <a href="#applicants" onclick="closeMobileNav()">Join</a>
+  <a href="#curriculum" onclick="closeMobileNav()">Curriculum</a>
+  <a href="#complaints" onclick="closeMobileNav()">Raise a Concern</a>
+  <a href="#connect" onclick="closeMobileNav()">Connect</a>
+</nav>
+
+<!-- Navigation -->
+<nav id="mainNav">
+  <a href="#home" class="nav-logo">
+    <div class="logo-symbol">₳</div>
+    <div class="logo-text">
+      <span class="nav-logo-name" style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--cream);letter-spacing:0.12em;text-transform:uppercase">AarthVedas</span>
+      <span class="logo-sub">Society of Economics</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#applicants">Join</a></li>
+    <li><a href="#curriculum">Curriculum</a></li>
+    <li><a href="#complaints">Raise a Concern</a></li>
+    <li><a href="#connect">Connect</a></li>
+    <li><a href="#applicants" class="nav-join-btn">Apply Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="adam-glow"></div>
+
+  <!-- Floating economics equations -->
+  <div class="eq" style="left:8%;top:20%;font-size:1.1rem;--r:-3deg;animation-duration:18s;animation-delay:0s">MV = PQ</div>
+  <div class="eq" style="left:15%;top:55%;font-size:0.9rem;--r:2deg;animation-duration:22s;animation-delay:4s">∂U/∂x = λ · ∂f/∂x</div>
+  <div class="eq" style="left:5%;top:70%;font-size:0.8rem;--r:-1deg;animation-duration:26s;animation-delay:8s">Y = C + I + G + (X−M)</div>
+  <div class="eq" style="right:45%;top:30%;font-size:1rem;--r:1.5deg;animation-duration:20s;animation-delay:2s">E = mc²  ⟶  W = PL</div>
+  <div class="eq" style="left:20%;top:80%;font-size:0.85rem;--r:-2deg;animation-duration:24s;animation-delay:11s">∑Pᵢ · Qᵢ = GDP</div>
+
+  <!-- Adam Smith SVG Silhouette (classic side-profile bust) -->
+  <div class="adam-bg">
+    <svg viewBox="0 0 300 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Stylised Adam Smith bust silhouette: wig, coat, classical profile -->
+      <g fill="#c9a84c">
+        <!-- Wig top — powdered wig shape -->
+        <ellipse cx="150" cy="95" rx="72" ry="62"/>
+        <!-- Wig side curls left -->
+        <ellipse cx="82" cy="135" rx="22" ry="38"/>
+        <!-- Wig side curls right -->
+        <ellipse cx="218" cy="135" rx="22" ry="38"/>
+        <!-- Wig back flow -->
+        <rect x="108" y="140" width="84" height="60" rx="5"/>
+        <!-- Neck -->
+        <rect x="132" y="195" width="36" height="35" rx="4"/>
+        <!-- Face oval -->
+        <ellipse cx="150" cy="165" rx="52" ry="62"/>
+        <!-- Classical coat — frock coat shape -->
+        <path d="M70 230 Q60 280 55 370 L245 370 Q240 280 230 230 Q200 215 150 220 Q100 215 70 230Z"/>
+        <!-- Coat lapels -->
+        <path d="M150 220 L115 260 L130 290 L150 270 L170 290 L185 260 Z" fill="#0d0a04"/>
+        <!-- Cravat / jabot -->
+        <path d="M135 222 L150 255 L165 222 Z" fill="#0d0a04" opacity="0.5"/>
+        <!-- Buttons -->
+        <circle cx="150" cy="295" r="4" fill="#0d0a04" opacity="0.4"/>
+        <circle cx="150" cy="315" r="4" fill="#0d0a04" opacity="0.4"/>
+        <circle cx="150" cy="335" r="4" fill="#0d0a04" opacity="0.4"/>
+        <!-- Shoulder epaulettes -->
+        <ellipse cx="82" cy="245" rx="28" ry="16"/>
+        <ellipse cx="218" cy="245" rx="28" ry="16"/>
+        <!-- Base / plinth -->
+        <rect x="65" y="368" width="170" height="20" rx="3"/>
+        <rect x="50" y="386" width="200" height="14" rx="3"/>
+        <rect x="35" y="398" width="230" height="10" rx="3"/>
+        <!-- Eyes (closed, classical) -->
+        <ellipse cx="132" cy="162" rx="9" ry="5" fill="#0d0a04" opacity="0.45"/>
+        <ellipse cx="168" cy="162" rx="9" ry="5" fill="#0d0a04" opacity="0.45"/>
+        <!-- Nose bridge -->
+        <path d="M148 170 Q143 180 144 186 Q148 190 152 186 Q153 180 152 170Z" fill="#0d0a04" opacity="0.2"/>
+        <!-- Mouth hint -->
+        <path d="M140 195 Q150 200 160 195" stroke="#0d0a04" stroke-width="2" fill="none" opacity="0.3"/>
+        <!-- Book in hand (The Wealth of Nations) -->
+        <rect x="72" y="300" width="30" height="40" rx="2"/>
+        <line x1="72" y1="305" x2="102" y2="305" stroke="#0d0a04" stroke-width="1" opacity="0.4"/>
+        <line x1="72" y1="310" x2="102" y2="310" stroke="#0d0a04" stroke-width="1" opacity="0.4"/>
+        <line x1="72" y1="315" x2="102" y2="315" stroke="#0d0a04" stroke-width="1" opacity="0.4"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. Department of Economics</p>
+    <h1 class="hero-title">
+      Aarth<span>Vedas</span>
+    </h1>
+    <p class="hero-subtitle">The Society of Economics — Where Classical Wisdom Meets Modern Inquiry</p>
+
+    <blockquote class="hero-quote">
+      "The real price of everything, what everything really costs to the man who wants to acquire it, is the toil and trouble of acquiring it."
+      <cite>— Adam Smith, The Wealth of Nations</cite>
+    </blockquote>
+
+    <div class="hero-ctas">
+      <a href="#applicants" class="btn-primary"><span>Apply to Join</span></a>
+      <a href="#curriculum" class="btn-secondary">Explore Curriculum</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <span class="scroll-text">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ===== APPLICANTS / STATS ===== -->
+<section id="applicants">
+  <div class="section-header reveal">
+    <span class="section-label">Membership</span>
+    <h2 class="section-title">Our Growing <em>Community</em></h2>
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card tilt-card reveal">
+      <div class="stat-number" id="liveApplicants" data-target="247" data-suffix="">0</div>
+      <div class="stat-label">Total Applicants</div>
+    </div>
+    <div class="stat-card tilt-card reveal">
+      <div class="stat-number" data-target="38" data-suffix="">0</div>
+      <div class="stat-label">Active Members</div>
+    </div>
+    <div class="stat-card tilt-card reveal">
+      <div class="stat-number" data-target="12" data-suffix="">0</div>
+      <div class="stat-label">Events Hosted</div>
+    </div>
+    <div class="stat-card tilt-card reveal">
+      <div class="stat-number" data-target="5" data-suffix="">0</div>
+      <div class="stat-label">Faculty Mentors</div>
+    </div>
+  </div>
+
+  <!-- Join Banner -->
+  <div class="live-banner reveal" style="margin-top:3rem">
+    <div style="margin-bottom:0.8rem">
+      <span class="live-dot"></span>
+      <span class="live-text">Applications are currently open</span>
+    </div>
+    <button class="btn-primary" id="joinBtn" style="margin-bottom:0.6rem"><span>Register as Applicant</span></button>
+    <div id="joinMsg"></div>
+  </div>
+</section>
+
+<!-- ===== CURRICULUM ===== -->
+<section id="curriculum">
+  <div class="section-header reveal">
+    <span class="section-label">Academic Programme</span>
+    <h2 class="section-title">Our <em>Curriculum</em></h2>
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <div class="curriculum-grid">
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">01</div>
+      <div class="curriculum-title">Foundations of Economics</div>
+      <div class="curriculum-desc">Microeconomics, macroeconomics, and the philosophical underpinnings of classical economic thought from Smith, Ricardo, and Mill.</div>
+      <span class="curriculum-tag">Core</span>
+    </div>
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">02</div>
+      <div class="curriculum-title">Indian Economic Thought</div>
+      <div class="curriculum-desc">Arthashastra, Vedic economic philosophy, and the evolution of Indian economic policy from ancient to modern times.</div>
+      <span class="curriculum-tag">Core</span>
+    </div>
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">03</div>
+      <div class="curriculum-title">Quantitative Methods</div>
+      <div class="curriculum-desc">Econometrics, statistical analysis, data interpretation, and mathematical modelling applied to real-world economic problems.</div>
+      <span class="curriculum-tag">Elective</span>
+    </div>
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">04</div>
+      <div class="curriculum-title">Public Policy & Governance</div>
+      <div class="curriculum-desc">How fiscal and monetary policy is crafted, debated, and implemented — including RBI, Union Budget, and global institutions.</div>
+      <span class="curriculum-tag">Elective</span>
+    </div>
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">05</div>
+      <div class="curriculum-title">Behavioural Economics</div>
+      <div class="curriculum-desc">Kahneman, Thaler, and the psychology of decision-making. Why humans deviate from rational models and what that means for markets.</div>
+      <span class="curriculum-tag">Advanced</span>
+    </div>
+    <div class="curriculum-card tilt-card reveal">
+      <div class="curriculum-number">06</div>
+      <div class="curriculum-title">Seminars & Case Studies</div>
+      <div class="curriculum-desc">Guest lectures, debate sessions, stock market simulations, budget analysis workshops, and inter-college competitions.</div>
+      <span class="curriculum-tag">Practical</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMPLAINTS ===== -->
+<section id="complaints">
+  <div class="section-header reveal">
+    <span class="section-label">Grievance Portal</span>
+    <h2 class="section-title">Raise a <em>Concern</em></h2>
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+    <p style="font-family:'EB Garamond',serif;font-size:1rem;color:rgba(245,234,214,0.5);margin-top:1rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.7">
+      All complaints are treated with strict confidentiality and addressed by the faculty committee within 7 working days.
+    </p>
+  </div>
+
+  <div class="complaints-wrap">
+    <form id="complaintForm" class="reveal">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="rollno">Roll Number</label>
+          <input type="text" id="rollno" placeholder="e.g. ECO2024001" />
+        </div>
+        <div class="form-group">
+          <label for="type">Category</label>
+          <select id="type" required>
+            <option value="" disabled selected>Select category</option>
+            <option value="academic">Academic Issue</option>
+            <option value="society">Society Conduct</option>
+            <option value="event">Event Feedback</option>
+            <option value="faculty">Faculty Concern</option>
+            <option value="admin">Administrative</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="Brief subject of your concern" required />
+      </div>
+
+      <div class="form-group">
+        <label for="message">Your Complaint / Suggestion</label>
+        <textarea id="message" rows="6" placeholder="Describe your concern in detail…" required></textarea>
+      </div>
+
+      <div class="form-group" style="display:flex;align-items:center;gap:0.7rem">
+        <input type="checkbox" id="anonymous" style="width:auto;accent-color:var(--gold)" />
+        <label for="anonymous" style="margin:0;letter-spacing:0.1em;font-size:0.8rem;text-transform:none;color:rgba(245,234,214,0.6)">Submit anonymously (your name will not be recorded)</label>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:100%"><span>Submit Complaint</span></button>
+    </form>
+
+    <div class="form-success" id="formSuccess">
+      <div class="success-icon">✦</div>
+      <p>Your complaint has been received.<br />The committee will respond within 7 working days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONNECT / SOCIAL / TEAM ===== -->
+<section id="connect">
+  <div class="section-header reveal">
+    <span class="section-label">Community</span>
+    <h2 class="section-title">Stay <em>Connected</em></h2>
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <!-- Social Links -->
+  <div class="social-links reveal">
+    <a href="https://www.instagram.com/aarthvedas" target="_blank" class="social-card">
+      <span class="social-icon">📸</span>
+      <div class="social-info">
+        <span class="social-name">Instagram</span>
+        <span class="social-handle">@aarthvedas</span>
+      </div>
+    </a>
+    <a href="https://wa.me/919999999999" target="_blank" class="social-card">
+      <span class="social-icon">💬</span>
+      <div class="social-info">
+        <span class="social-name">WhatsApp Group</span>
+        <span class="social-handle">Join Community</span>
+      </div>
+    </a>
+    <a href="mailto:aarthvedas@college.edu" class="social-card">
+      <span class="social-icon">✉️</span>
+      <div class="social-info">
+        <span class="social-name">Email Us</span>
+        <span class="social-handle">aarthvedas@college.edu</span>
+      </div>
+    </a>
+    <a href="https://www.linkedin.com/company/aarthvedas" target="_blank" class="social-card">
+      <span class="social-icon">🔗</span>
+      <div class="social-info">
+        <span class="social-name">LinkedIn</span>
+        <span class="social-handle">AarthVedas Society</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Team / People -->
+  <div class="section-header reveal" style="margin-bottom:2rem;margin-top:2rem">
+    <span class="section-label">Leadership</span>
+    <h3 class="section-title" style="font-size:clamp(1.5rem,3vw,2.2rem)">The <em>People</em></h3>
+  </div>
+
+  <div class="team-grid reveal">
+    <!-- Add / remove team members here -->
+    <div class="team-card tilt-card">
+      <div class="team-avatar">A</div>
+      <div class="team-name">Aarav Sharma</div>
+      <div class="team-role">President</div>
+      <a href="https://instagram.com/aarav.ec" target="_blank" class="team-insta">@aarav.ec</a>
+    </div>
+    <div class="team-card tilt-card">
+      <div class="team-avatar">P</div>
+      <div class="team-name">Priya Mehta</div>
+      <div class="team-role">Vice President</div>
+      <a href="https://instagram.com/priyamehta_eco" target="_blank" class="team-insta">@priyamehta_eco</a>
+    </div>
+    <div class="team-card tilt-card">
+      <div class="team-avatar">R</div>
+      <div class="team-name">Rohan Verma</div>
+      <div class="team-role">Secretary</div>
+      <a href="https://instagram.com/rohan.vedas" target="_blank" class="team-insta">@rohan.vedas</a>
+    </div>
+    <div class="team-card tilt-card">
+      <div class="team-avatar">S</div>
+      <div class="team-name">Simran Kaur</div>
+      <div class="team-role">Treasurer</div>
+      <a href="https://instagram.com/simrankaur_" target="_blank" class="team-insta">@simrankaur_</a>
+    </div>
+    <div class="team-card tilt-card">
+      <div class="team-avatar">K</div>
+      <div class="team-name">Karan Joshi</div>
+      <div class="team-role">Events Head</div>
+      <a href="https://instagram.com/karan.arth" target="_blank" class="team-insta">@karan.arth</a>
+    </div>
+  </div>
+
+  <p class="reveal" style="text-align:center;margin-top:2.5rem;font-family:'Cormorant Garamond',serif;font-size:0.85rem;letter-spacing:0.2em;color:var(--gold-dark)">
+    — Update team names, roles &amp; Instagram handles in index.html →  .team-card sections —
+  </p>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>© 2024 <span>AarthVedas — The Society of Economics</span> &nbsp;·&nbsp; All rights reserved</p>
+  <p style="margin-top:0.4rem;font-size:0.7rem;letter-spacing:0.25em">
+    <em style="font-family:'Playfair Display',serif;color:rgba(201,168,76,0.3)">"The invisible hand guides markets; knowledge guides us."</em>
+  </p>
+</footer>
+
+<script src="script.js"></script>
+<script>
+  function toggleMobileNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+  }
+  function closeMobileNav() {
+    document.getElementById('mobileNav').classList.remove('open');
+  }
+</script>
+</body>
+</html>
